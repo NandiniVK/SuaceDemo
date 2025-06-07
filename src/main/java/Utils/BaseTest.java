@@ -20,14 +20,22 @@ public class BaseTest {
 
 	public void initDriver() {
 		ChromeOptions options = new ChromeOptions();
-		options.addArguments("--disable-save-password-bubble");
-		options.setExperimentalOption("prefs", new HashMap<String, Object>() {{
-		    put("credentials_enable_service", false);
-		    put("profile.password_manager_enabled", false);
-		}});
+		// Run in incognito
 		options.addArguments("--incognito");
+
+		// Add CI-friendly options
+		options.addArguments("--headless=new"); // Use --headless=new for Chrome 109+
+		options.addArguments("--no-sandbox");
+		options.addArguments("--disable-dev-shm-usage");
+		options.addArguments("--disable-gpu");
+
+		// OPTIONAL: set a unique user-data-dir to avoid session conflicts
+		String userDataDir = System.getProperty("java.io.tmpdir") + "/profile-" + System.nanoTime();
+		options.addArguments("--user-data-dir=" + userDataDir);
+
 		WebDriverManager.chromedriver().setup();
 		driver = new ChromeDriver(options);
+
 		driver.manage().deleteAllCookies();
 		driver.manage().window().maximize();
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
