@@ -11,7 +11,7 @@ This is a Java-based test automation framework for testing the e-commerce demo s
 
 ## Prerequisites
 
-- Java 11 or above
+- Java 17 or above
 - Maven 3.6+
 - Chrome browser
 - IDE like IntelliJ or Eclipse
