@@ -37,3 +37,10 @@ jobs:
       with:
         name: extent-report
         path: target/ExtentReport.html
+    - name: Upload Cucumber Report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: cucumber-report
+        path: target/cucumber-reports/html-report.html
+
