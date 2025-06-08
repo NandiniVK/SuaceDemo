@@ -1,7 +1,6 @@
 package Utils;
 
 import java.time.Duration;
-import java.util.HashMap;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -12,41 +11,37 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class BaseTest {
 
-	public static WebDriver driver;
+    // Thread-safe WebDriver
+    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
-	public BaseTest() {
-		PageFactory.initElements(driver, this);
-	}
+    public BaseTest() {
+        PageFactory.initElements(getDriver(), this);
+    }
 
-	public void initDriver() {
-		ChromeOptions options = new ChromeOptions();
-		// Run in incognito
-		options.addArguments("--incognito");
+    public void initDriver() {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--incognito");
+        options.addArguments("--headless=new"); //Remove this for local execution
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-gpu");
 
-		// Add CI-friendly options
-		options.addArguments("--headless=new"); // Use --headless=new for Chrome 109+, Remove this for local runs
-		options.addArguments("--no-sandbox");
-		options.addArguments("--disable-dev-shm-usage");
-		options.addArguments("--disable-gpu");
+        WebDriverManager.chromedriver().setup();
+        driver.set(new ChromeDriver(options));
 
-		String userDataDir = System.getProperty("java.io.tmpdir") + "/profile-" + System.nanoTime();
-		options.addArguments("--user-data-dir=" + userDataDir);
+        getDriver().manage().deleteAllCookies();
+        getDriver().manage().window().maximize();
+        getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+    }
 
-		WebDriverManager.chromedriver().setup();
-		driver = new ChromeDriver(options);
+    public void quitDriver() {
+        if (driver.get() != null) {
+            driver.get().quit();
+            driver.remove(); // Very important to avoid memory leaks
+        }
+    }
 
-		driver.manage().deleteAllCookies();
-		driver.manage().window().maximize();
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-	}
-
-	public void quitDriver() {
-		if (driver != null) {
-			driver.quit();
-		}
-	}
-
-	public static WebDriver getDriver() {
-		return driver;
-	}
+    public static WebDriver getDriver() {
+        return driver.get();
+    }
 }
