@@ -29,7 +29,7 @@ public class Hooks extends BaseTest {
 	@After
 	public void tearDown(Scenario scenario) {
 		if (scenario.isFailed()) {
-			TakesScreenshot ts = (TakesScreenshot) driver;
+			TakesScreenshot ts = (TakesScreenshot) getDriver();
 			File src = ts.getScreenshotAs(OutputType.FILE);
 			String screenshotPath = "target/screenshots/" + scenario.getName() + ".png";
 			try {
