@@ -65,12 +65,12 @@ public class ProductsPage extends BaseTest {
 	}
 	
 	public void addProductByIndex(int index) {
-		driver.findElements(By.className("btn_inventory")).get(index).click();
+		etDriver().findElements(By.className("btn_inventory")).get(index).click();
        
     }
 	
 	public void goToCart() {
-        driver.findElement(By.className("shopping_cart_link")).click();
+        etDriver().findElement(By.className("shopping_cart_link")).click();
     }
 
 }
